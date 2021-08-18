@@ -115,6 +115,14 @@ def plotNeurons(voltages, N):
         i+=1
     plt.show()
 
+def neuron_nr_to_coord(neuron_nr):
+    #x = (neuron_nr // 10 ) * 10
+    x = torch.div(neuron_nr, 10, rounding_mode='floor')
+    y = (neuron_nr % 10 ) * 10
+    #print(x)
+    #print(y)
+    return torch.tensor([x,y])
+
 def rel_angle_to_abs_angle(id_x, angle):
     #Check where motors are right now, and use that to calculate rel to abs angle
 
