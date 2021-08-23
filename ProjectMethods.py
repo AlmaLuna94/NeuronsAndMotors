@@ -60,6 +60,27 @@ def add_pixel_to_array(array, pixel):
     else:
         return array.append(pixel)
 
+def get_one_t_array(size_x , size_y, activity_position, rand_act=1, tru_act=1) :
+
+    def sort_order(position):
+      return position[0]*size_y+position[1]
+
+    list = []
+
+    #Adding Random activities
+    for y in range(20*rand_act):
+        add_pixel_to_array(list, randPixel(size_x, size_y))
+    
+
+    #Adding true activities around activity position
+    for y in range(5):
+        add_pixel_to_array(list, randPixel_around_pos(size_x, size_y, activity_position,))
+
+    #Sorting the so that activities are ordered based on position like data from cameras
+    list.sort(key=sort_order)
+
+    return list
+
 def create_sparse_data(length, size_x, size_y):
 
     def sort_order(position):
@@ -81,7 +102,7 @@ def create_sparse_data(length, size_x, size_y):
     for x in range(length):
         array = []
         #two or more random activities
-        for y in range(10):
+        for y in range(20):
             add_pixel_to_array(array, randPixel(size_x, size_y))
 
         #Add true activities around activity position
