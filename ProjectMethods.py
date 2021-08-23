@@ -36,6 +36,25 @@ def datasetCreate():
 def randPixel(size_x, size_y):
     return torch.tensor([torch.randint(size_x,(1,)), torch.randint(size_y,(1,))])
 
+
+
+   #0 - Loop function
+def loopthrough(self, times):
+    #Testloop
+
+    loop1 = loop(100,100)
+
+    data_gen = loop1.data_generator()
+
+    for x in range(times):
+        time_start = pc() #util.nanosecond_to_milisecond(pc())
+        list = data_gen.__next__()
+        input_tensor = loop1.sparse_data_to_tensor(list)
+        loop1.input_to_neurons(input=input_tensor)
+        angle = loop1.calculate_angle()
+        loop1.angle_to_motors(angle)
+        print("Time to run one step = {} milliseconds".format(util.nanosecond_to_milisecond(pc()-time_start)))
+
 def randPixel_around_pos(size_x, size_y, position):
 
     def min(x):

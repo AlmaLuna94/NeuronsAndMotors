@@ -1,4 +1,4 @@
-#0 - Loop function
+#0 - Loop function, in Projct methods
 
 #0.5 Data received from cameras and put into a generator
 
@@ -40,6 +40,37 @@ import util
 from scipy.signal import convolve2d
 from torch.nn import Conv2d as conv2
 
+#0 - Loop function
+def loopthrough(times):
+   #Testloop
+
+   loop1 = loop(100,100)
+
+   data_gen = loop1.data_generator()
+   b_times = torch.zeros(times)
+
+
+
+   for x in range(times):
+      time_start = pc() #util.nanosecond_to_milisecond(pc())
+
+      input_tensor = loop1.sparse_data_to_tensor(data_gen.__next__())
+      loop1.input_to_neurons(input=input_tensor)
+
+      #Calculating angle and sending it to motors
+      #This could/should only be done every so often
+
+      angle = loop1.calculate_angle()
+      #loop1.angle_to_motors(angle)
+
+      #Calculate and save benchmark time
+      b_times[x] = util.nanosecond_to_milisecond(pc()-time_start)
+
+      #print("Time to run one step = {} milliseconds".format(util.nanosecond_to_milisecond(pc()-time_start)))
+      if x % 50 == 49:
+         print(angle)
+         #loop1.angle_to_motors(angle)
+   print(sum(b_times)/times)
 
 class loop():
 
@@ -63,9 +94,7 @@ class loop():
       self.timestep = 0
       self.initiate_neurons()
       print("activity position = {}".format(self.activity_position))
-
-
-   #0 - Loop function
+      print("Which should have the motor angles at  {}, {}".format(1800+((self.activity_position[0]/100)*700), 1800+((self.activity_position[1]/100)*700)))
 
 
    #1- Data creation, continous data - Generator
@@ -83,10 +112,11 @@ class loop():
       for val in list:
             array[val[0], val[1]] = 1
 
-
       kernel = torch.ones([10,10])
       convolved = convolve2d(array, kernel, mode="valid")
       array2 = torch.from_numpy(convolved[::10, ::10]).flatten()
+      print(array2.size())
+
 
       return array2
 
@@ -98,16 +128,21 @@ class loop():
       return self.spikes, self.states
 
    #3- Neurons result used to get angle
-   def calculate_angle(self, k=4):
+   def calculate_angle(self, k=3):
 
       #Print spikes if you want
       #print("Spikes: {}".format(spikes))
 
       tp_val, tp_ind = torch.topk(self.spikes, k)
-      print(self.spikes.size())
+      #print(self.spikes.size())
 
       #Print spike indices if you want
       #print("Spike maximum indices: {}".format(tp_ind))
+
+      if self.timestep % 50 == 49:
+         for nr in tp_ind:
+            print("hello")
+            print(pm.neuron_nr_to_coord(nr))
 
       #Spikes to avg position
       avg = torch.tensor([0,0])
@@ -116,7 +151,7 @@ class loop():
       avg = avg/tp_ind.size(0)
 
       #Print spike Spike_max approximate position  
-      print("Spike_max approximate position : {}".format(avg/tp_ind.size(0)))
+      #print("Spike_max approximate position : {}".format(avg/tp_ind.size(0)))
       
       motor_angles = torch.tensor([1800+((avg[0]/100)*700), 1800+((avg[1]/100)*700)])
 
@@ -152,6 +187,7 @@ angle = loop1.calculate_angle()
 loop1.angle_to_motors(angle)
 print("Time to run one step = {} milliseconds".format(util.nanosecond_to_milisecond(pc()-time_start)))
 
+loopthrough(100)
 
 #time = pc() 
 #print(pc()- time)
