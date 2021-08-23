@@ -1,3 +1,5 @@
+#0 - Loop function
+
 #0.5 Data received from cameras and put into a generator
 
 #1- Data creation, continous data - Generator
@@ -33,6 +35,11 @@ from norse.torch import li_step, LICell, LIState, LIParameters, LIFCell
 from norse.torch.module import leaky_integrator as li
 import random
 from norse.torch.functional import lif as lif
+from time import perf_counter_ns as pc
+import util 
+from scipy.signal import convolve2d
+from torch.nn import Conv2d as conv2
+
 
 class loop():
 
@@ -58,22 +65,30 @@ class loop():
       print("activity position = {}".format(self.activity_position))
 
 
+   #0 - Loop function
+
 
    #1- Data creation, continous data - Generator
    def data_generator(self, rand_act=1, tru_act=1):
       while self.timestep < self.max_loops:
-         yield (pm.get_one_t_array(self.size_x, self.size_y, self.activity_position, rand_act, tru_act), num)
+         yield pm.get_one_t_array(self.size_x, self.size_y, self.activity_position, rand_act, tru_act)
          self.timestep += 1
          
          #Reduce spikes continously, or better yet. Have the spikes be in a sparse array themselves. 
          #if self.timestep %  = 9
    
    #1.5 Sparse data to tensor usable by Norse
-   def sparse_data_to_tensor(self):
+   def sparse_data_to_tensor(self, list):
       array = torch.zeros(self.size_x, self.size_y)
-      for val in array:
+      for val in list:
             array[val[0], val[1]] = 1
-      return array
+
+
+      kernel = torch.ones([10,10])
+      convolved = convolve2d(array, kernel, mode="valid")
+      array2 = torch.from_numpy(convolved[::10, ::10]).flatten()
+
+      return array2
 
    #2- Data used as input for Neurons
    def input_to_neurons(self, input):
@@ -83,24 +98,61 @@ class loop():
       return self.spikes, self.states
 
    #3- Neurons result used to get angle
-   def calculate_angle():
+   def calculate_angle(self, k=4):
+
+      #Print spikes if you want
+      #print("Spikes: {}".format(spikes))
+
+      tp_val, tp_ind = torch.topk(self.spikes, k)
+      print(self.spikes.size())
+
+      #Print spike indices if you want
+      #print("Spike maximum indices: {}".format(tp_ind))
+
+      #Spikes to avg position
+      avg = torch.tensor([0,0])
+      for nr in tp_ind:
+         avg = avg + pm.neuron_nr_to_coord(nr)
+      avg = avg/tp_ind.size(0)
+
+      #Print spike Spike_max approximate position  
+      print("Spike_max approximate position : {}".format(avg/tp_ind.size(0)))
+      
+      motor_angles = torch.tensor([1800+((avg[0]/100)*700), 1800+((avg[1]/100)*700)])
+
+      #Print motor angle
+      #print("Which corresponds to motor_angle ")
+
+      return motor_angles
+
+
+   #4- Angle sent to motors for movement
+   def angle_to_motors(self, angle):
+      print("Angle {} sent to motor (TBF)".format(angle))
+
+
+   #4.5 Benchmark results saved for one loop through
+   #def benchmark():
       
 
-
-   print("Spikes: {}".format(spikes))
-tp_val, tp_ind = torch.topk(spikes, 4)
-print("Spike maximum indices: {}".format(tp_ind))
-avg = torch.tensor([0,0])
-for nr in tp_ind:
-    avg = avg + pm.neuron_nr_to_coord(nr)
-print("Spike_max approximate position : {}".format(avg/tp_ind.size(0)))
-pm.plotNeurons(voltages.detach(),N)
-
-
-
 loop1 = loop(100,100)
-data_gen = loop1.data_generator()
-#25 len, 20 for random, 5 for true
-#print(len(data_gen.__next__()[0]))
 
+data_gen = loop1.data_generator()
+
+#25 len, 20 for random, 5 for true
+#print(data_gen.__next__()[5])
+
+
+#Testloop
+time_start = pc() #util.nanosecond_to_milisecond(pc())
+list = data_gen.__next__()
+input_tensor = loop1.sparse_data_to_tensor(list)
+loop1.input_to_neurons(input=input_tensor)
+angle = loop1.calculate_angle()
+loop1.angle_to_motors(angle)
+print("Time to run one step = {} milliseconds".format(util.nanosecond_to_milisecond(pc()-time_start)))
+
+
+#time = pc() 
+#print(pc()- time)
 

@@ -196,6 +196,7 @@ class decode():
     def print_max_min(self):
         print("Max: {}".format(self.max))
         print("Min: {}".format(self.min))
+    
  
 
 
