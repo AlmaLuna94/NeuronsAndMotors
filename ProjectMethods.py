@@ -58,16 +58,16 @@ def loopthrough(self, times):
 def randPixel_around_pos(size_x, size_y, position):
 
     def min(x):
-        if x < 5:
+        if x < 8:
             return 0
         else:
-            return x - 5
+            return x - 8
         
     def max(x, size):
-        if x > (size - 6):
+        if x > (size - 9):
             return size - 1
         else:
-            return x + 5
+            return x + 8
 
     return torch.tensor([torch.randint(min(position[0]), max(position[0], size_x),(1,)), torch.randint(min(position[1]), max(position[1], size_y),(1,))])
 
@@ -87,7 +87,7 @@ def get_one_t_array(size_x , size_y, activity_position, rand_act=1, tru_act=1) :
     list = []
 
     #Adding Random activities
-    for y in range(20*rand_act):
+    for y in range(10*rand_act):
         add_pixel_to_array(list, randPixel(size_x, size_y))
     
 
@@ -157,7 +157,7 @@ def plotNeurons(voltages, N):
 
 def neuron_nr_to_coord(neuron_nr):
     #x = (neuron_nr // 10 ) * 10
-    x = torch.div(neuron_nr, 10, rounding_mode='floor')
+    x = torch.div(neuron_nr, 10, rounding_mode='floor') * 10
     y = (neuron_nr % 10 ) * 10
     #print(x)
     #print(y)

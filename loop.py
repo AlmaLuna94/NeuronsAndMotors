@@ -47,6 +47,8 @@ def loopthrough(times):
    loop1 = loop(100,100)
 
    data_gen = loop1.data_generator()
+
+   #Tensor for holding benchmark times
    b_times = torch.zeros(times)
 
 
@@ -70,7 +72,8 @@ def loopthrough(times):
       if x % 50 == 49:
          print(angle)
          #loop1.angle_to_motors(angle)
-   print(sum(b_times)/times)
+   
+   print("Average time to run one timestep {}".format(sum(b_times)/times))
 
 class loop():
 
@@ -115,7 +118,6 @@ class loop():
       kernel = torch.ones([10,10])
       convolved = convolve2d(array, kernel, mode="valid")
       array2 = torch.from_numpy(convolved[::10, ::10]).flatten()
-      print(array2.size())
 
 
       return array2
@@ -128,7 +130,7 @@ class loop():
       return self.spikes, self.states
 
    #3- Neurons result used to get angle
-   def calculate_angle(self, k=3):
+   def calculate_angle(self, k=10):
 
       #Print spikes if you want
       #print("Spikes: {}".format(spikes))
@@ -139,16 +141,19 @@ class loop():
       #Print spike indices if you want
       #print("Spike maximum indices: {}".format(tp_ind))
 
-      if self.timestep % 50 == 49:
-         for nr in tp_ind:
-            print("hello")
-            print(pm.neuron_nr_to_coord(nr))
-
+      
       #Spikes to avg position
       avg = torch.tensor([0,0])
-      for nr in tp_ind:
-         avg = avg + pm.neuron_nr_to_coord(nr)
-      avg = avg/tp_ind.size(0)
+      for x, nr in enumerate(tp_ind, start = 0):
+         avg = avg + (pm.neuron_nr_to_coord(nr) * (tp_val[x]/sum(tp_val)))
+      #avg = avg/tp_ind.size(0)
+
+
+      """ if self.timestep % 50 == 49:
+         for nr in tp_ind:
+            print(nr)
+            print(pm.neuron_nr_to_coord(nr)) """
+
 
       #Print spike Spike_max approximate position  
       #print("Spike_max approximate position : {}".format(avg/tp_ind.size(0)))
@@ -169,7 +174,7 @@ class loop():
    #4.5 Benchmark results saved for one loop through
    #def benchmark():
       
-
+""" 
 loop1 = loop(100,100)
 
 data_gen = loop1.data_generator()
@@ -186,7 +191,7 @@ loop1.input_to_neurons(input=input_tensor)
 angle = loop1.calculate_angle()
 loop1.angle_to_motors(angle)
 print("Time to run one step = {} milliseconds".format(util.nanosecond_to_milisecond(pc()-time_start)))
-
+ """
 loopthrough(100)
 
 #time = pc() 
