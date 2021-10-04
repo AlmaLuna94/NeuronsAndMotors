@@ -58,16 +58,16 @@ def loopthrough(self, times):
 def randPixel_around_pos(size_x, size_y, position):
 
     def min(x):
-        if x < 8:
+        if x < 3:
             return 0
         else:
-            return x - 8
+            return x - 3
         
     def max(x, size):
-        if x > (size - 9):
+        if x > (size - 4):
             return size - 1
         else:
-            return x + 8
+            return x + 3
 
     return torch.tensor([torch.randint(min(position[0]), max(position[0], size_x),(1,)), torch.randint(min(position[1]), max(position[1], size_y),(1,))])
 

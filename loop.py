@@ -36,7 +36,7 @@ from norse.torch.module import leaky_integrator as li
 import random
 from norse.torch.functional import lif as lif
 from time import perf_counter_ns as pc
-import util 
+#import util 
 from scipy.signal import convolve2d
 from torch.nn import Conv2d as conv2
 
@@ -192,7 +192,7 @@ angle = loop1.calculate_angle()
 loop1.angle_to_motors(angle)
 print("Time to run one step = {} milliseconds".format(util.nanosecond_to_milisecond(pc()-time_start)))
  """
-loopthrough(100)
+#loopthrough(100)
 
 #time = pc() 
 #print(pc()- time)
