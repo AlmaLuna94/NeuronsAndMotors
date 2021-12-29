@@ -58,16 +58,16 @@ def loopthrough(self, times):
 def randPixel_around_pos(size_x, size_y, position):
 
     def min(x):
-        if x < 3:
+        if x < 6:
             return 0
         else:
-            return x - 3
+            return x - 6
         
     def max(x, size):
-        if x > (size - 4):
+        if x > (size - 7):
             return size - 1
         else:
-            return x + 3
+            return x + 6
 
     return torch.tensor([torch.randint(min(position[0]), max(position[0], size_x),(1,)), torch.randint(min(position[1]), max(position[1], size_y),(1,))])
 
@@ -92,7 +92,7 @@ def get_one_t_array(size_x , size_y, activity_position, rand_act=1, tru_act=1) :
     
 
     #Adding true activities around activity position
-    for y in range(5):
+    for y in range(15):
         add_pixel_to_array(list, randPixel_around_pos(size_x, size_y, activity_position,))
 
     #Sorting the so that activities are ordered based on position like data from cameras

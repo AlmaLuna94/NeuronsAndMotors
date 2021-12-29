@@ -2,7 +2,6 @@ from time import perf_counter_ns as pcn
 from scipy.signal import convolve2d
 from torch.nn import Conv2d as conv2
 import torch
-from .. import juliaTestRobot
 
 def nanosecond_to_milisecond(t):
     return t*1e-6

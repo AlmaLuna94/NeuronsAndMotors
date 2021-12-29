@@ -1,3 +1,8 @@
+##A loop that implements a method like the ones in main_file(Needs to be renamed) and testImageNeurons. Then takes those results and sends them to the motors. 
+# Actually sending them to the motors have not been fully implemented yet. But the file in KTH-Neuro-Computing-Systems/Multi-motor does this. So just connecting these two 
+# should work.   
+
+
 #0 - Loop function, in Projct methods
 
 #0.5 Data received from cameras and put into a generator
@@ -20,10 +25,6 @@
 
 #5 - Benchmark calculated ( Time taken, etc)
 
-
-# a generator that yields a list of activities each time it is called
-   #8 sum_of_first_n = sum(firstn(1000000))
-
 import ProjectMethods as pm
 import torch
 import numpy as np
@@ -36,9 +37,12 @@ from norse.torch.module import leaky_integrator as li
 import random
 from norse.torch.functional import lif as lif
 from time import perf_counter_ns as pc
-#import util 
 from scipy.signal import convolve2d
 from torch.nn import Conv2d as conv2
+
+
+def nanosecond_to_milisecond(t):
+    return t*1e-6
 
 #0 - Loop function
 def loopthrough(times):
@@ -66,14 +70,16 @@ def loopthrough(times):
       #loop1.angle_to_motors(angle)
 
       #Calculate and save benchmark time
-      b_times[x] = util.nanosecond_to_milisecond(pc()-time_start)
+      b_times[x] = nanosecond_to_milisecond(pc()-time_start)
+
 
       #print("Time to run one step = {} milliseconds".format(util.nanosecond_to_milisecond(pc()-time_start)))
       if x % 50 == 49:
-         print(angle)
+         print("Angle sent to motors {}".format(angle))
          #loop1.angle_to_motors(angle)
    
-   print("Average time to run one timestep {}".format(sum(b_times)/times))
+   #Note, using CPU since lack of access to CUDA GPU
+   print("Average time to run one timestep {} milliseconds".format(sum(b_times)/times))
 
 class loop():
 
@@ -192,8 +198,8 @@ angle = loop1.calculate_angle()
 loop1.angle_to_motors(angle)
 print("Time to run one step = {} milliseconds".format(util.nanosecond_to_milisecond(pc()-time_start)))
  """
-#loopthrough(100)
+loopthrough(100)
 
-#time = pc() 
-#print(pc()- time)
+time = pc() 
+print(pc()- time)
 
