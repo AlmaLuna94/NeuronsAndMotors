@@ -1,2 +1,11 @@
 # NeuronsAndMotors
-Work with python, norse, torch and ROS 
+
+This repository contains 3 main files that do similar things: testImageNeurons, locate_activity and loop. As well as file containing extra functions that are used in all three previous files.
+
+Locate_activity and testImageNeurons are two quite similar methods to locate where in a noisy spiking data image the main activity is happening.
+Loop also tries to locate activity in a noisy spiking data image, but it also implements many steps to be able to send that location data to motors that can follow the activity in real time. It also loops through many times to see how it can follow a changing activity location over time, and times how long each iteration takes. 
+
+To be able to actually move motors using this, all that is needed is to connect this code to the 
+motor controlling code in the folder KTH-Neuro-Computing-Systems, specifically the code in motorControlPython to actually move it. But this has yet to be done. 
+
+The spiking image data that these functions/files currently used is manually created to imitate DVS camera data. But with a function that continuously send data from a DVS camera into these functions, they should work fine without much if any further changes to the actual location finding methods. 
