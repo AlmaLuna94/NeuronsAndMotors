@@ -9,3 +9,7 @@ To be able to actually move motors using this, all that is needed is to connect 
 motor controlling code in the folder KTH-Neuro-Computing-Systems, specifically the code in motorControlPython to actually move it. But this has yet to be done. 
 
 The spiking image data that these functions/files currently used is manually created to imitate DVS camera data. But with a function that continuously send data from a DVS camera into these functions, they should work fine without much if any further changes to the actual location finding methods. 
+
+---------------------------------------------------------------------------------------------------
+
+These functions/files use artificial neurons and functions for these neurons, from the library norse. At the moment no learning is done on the network of neurons and their connections. But since it is implemented using norse, which has ways of doing machine learning using these neurons. This could be a possible next step. 
