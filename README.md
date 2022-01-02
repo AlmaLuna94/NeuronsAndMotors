@@ -13,3 +13,9 @@ The spiking image data that these functions/files currently used is manually cre
 ---------------------------------------------------------------------------------------------------
 
 These functions/files use artificial neurons and functions for these neurons, from the library norse. At the moment no learning is done on the network of neurons and their connections. But since it is implemented using norse, which has ways of doing machine learning using these neurons. This could be a possible next step. 
+
+
+---------------------------------------------------------------------------------------------------
+The file loop can be run normally, with the value in loopthrough(x) representing how many timesteps are looped through.
+locate activity is a notebook file which can be run through stepwise.
+testImageNeurons is a notebook file as well which can be run through stepwise. You can change the values of T,N and U to change the size/length of the spiking input data. 
