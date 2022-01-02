@@ -198,8 +198,10 @@ angle = loop1.calculate_angle()
 loop1.angle_to_motors(angle)
 print("Time to run one step = {} milliseconds".format(util.nanosecond_to_milisecond(pc()-time_start)))
  """
-loopthrough(100)
 
-time = pc() 
-print(pc()- time)
+if __name__ == "__main__":
+   loopthrough(100)
+
+   time = pc() 
+   print(pc()- time)
 
