@@ -200,7 +200,7 @@ print("Time to run one step = {} milliseconds".format(util.nanosecond_to_milisec
  """
 
 if __name__ == "__main__":
-   loopthrough(100)
+   loopthrough(1000)
 
    time = pc() 
    print(pc()- time)
